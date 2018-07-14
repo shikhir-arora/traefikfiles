@@ -1,0 +1,43 @@
+debug = true
+
+logLevel = "ERROR" #DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+InsecureSkipVerify = true
+defaultEntryPoints = ["https", "http"]
+
+[web]
+address = ":8080"
+  [web.auth.basic]
+  usersFile = "/shared/.htpasswd"
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+
+[file]
+  watch = true
+  filename = "/etc/traefik/rules.toml"
+
+[acme]
+email = "shikhir@thesarogroup.com" 
+storage="/etc/traefik/acme/acme.json"
+entryPoint = "https"
+acmeLogging=true
+onDemand = false 
+[acme.dnsChallenge]
+  provider = "digitalocean"
+  delayBeforeCheck = 0
+[[acme.domains]]
+   main = "dockr.app"
+[[acme.domains]]
+   main = "*.dockr.app"
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "dockr.app"
+watch = true
+exposedbydefault = false
