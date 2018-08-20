@@ -1,4 +1,4 @@
-version: "3.6"
+version: "3.7"
 services:
 
   traefik:
@@ -60,6 +60,25 @@ services:
       - WATCHTOWER_NOTIFICATIONS=slack
       - WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL=${SLACK_HOOK_URL}
       - WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=${SLACK_HOOK_NAME}
+  
+  nginx:
+    image: nginx:latest
+    container_name: nginx1
+    restart: always
+    ports:
+      - "33333"
+    networks:
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=nginx"
+      - "traefik.docker.network=traefik_proxy"
+      - "traefik.frontend.rule=Host:${DOMAINNAME}, www.${DOMAINNAME}"
+      - "traefik.port=80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /nginx/html:/usr/share/nginx/html
+      - ${USERDIR}/docker/shared:/shared
 
 networks:
   traefik_proxy:
