@@ -27,7 +27,7 @@ services:
       - ${USERDIR}/docker/shared:/shared
 
   portainer:
-    image: portainer/portainer
+    image: portainer/portainer:develop
     container_name: portainer
     restart: always
     ports:
